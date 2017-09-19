@@ -2,12 +2,12 @@
 
 ## For Help
 
- - [Course Web Site](courses.ku.edu.tr/comp200)
- - [Mailing List](comp200@ku.edu.tr)
+ - [Course Web Site](https://courses.ku.edu.tr/comp200)
+ - [Mailing List](mailto://comp200@ku.edu.tr)
 
 ## For Problem Sets
 
- - [ETutor Problem Site](etutor.ku.edu.tr/comp200)
+ - [ETutor Problem Site](https://etutor.ku.edu.tr/comp200)
 
 ## Main HW
 
