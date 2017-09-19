@@ -1,0 +1,4 @@
+[submodule "sicp"]
+	path = sicp
+	url = https://github.com/sarabander/sicp.git
+	branch = master
