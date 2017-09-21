@@ -52,3 +52,9 @@ To apply a procedure to args:
 1. If primitive procedure (+, >, etc) just do it
 2. If compound procedure (user defined with lambda):
     Eval the body with each parameter replaced with the corresponding input argument.
+
+### Constants (Self-Evaluating Values)
+
+```
+3, 3.1, -4, #t, #f, "foo"
+```
