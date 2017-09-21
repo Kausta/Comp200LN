@@ -12,3 +12,8 @@
 ## Main HW
 
  * 5 Large Scale Programming Projects
+
+## Lecs
+
+ - [Intro](Intro.md)
+ - [Lec 2](Lec2.md)
