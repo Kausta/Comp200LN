@@ -18,3 +18,4 @@
  - [Intro](Intro.md)
  - [Lec 2](Lec2.md)
  - [Lec 3](Lec3.md)
+ - [Lec 4](Lec4.ipynb)
