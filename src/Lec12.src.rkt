@@ -1,0 +1,22 @@
+(let ((x (cons 'y 'z)))
+  (let ((u (cons x x)))
+    (set-car! x 'x)
+    u))
+
+(let ((x (cons 'y 'z)))
+  (let ((u (cons 'x x)))
+    (set-cdr! x (cons 'z 'a))
+    (set-cdr! u (cdr x))
+    u))
+
+(let ((x (cons 'y 'z)))
+  (let ((u (cons x x)))
+    (set-cdr! (cdr u) u)
+    u))
+
+(let ((x (cons 'y 'z)))
+  (let ((u (cons x 'x)))
+    (let ((w (cons u 'u)))
+      (set-car! x w)
+      (set-car! w x)
+      w)))

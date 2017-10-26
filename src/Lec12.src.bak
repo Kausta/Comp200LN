@@ -1,0 +1,4 @@
+(let ((x (cons 'y 'z)))
+  (let ((u (cons x x)))
+    (set-cdr! (cdr u) u)
+    u))
