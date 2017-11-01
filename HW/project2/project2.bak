@@ -96,11 +96,11 @@
 (define seg (make-seg (make-point 3 5)
 		      (make-point 6 10)))
  		   	      
-;(segment-length seg) 		   	      
+(segment-length seg) 		   	      
 ; will yield the value 5.830951894845301
 
 ; Using test segments from points_segs.scm
-;(map segment-length test-segments)
+(map segment-length test-segments)
 ; Test case:         Output:
 ; x1, y1 to x2, y2   len
 ;  0,  0 to  0,  4  (4
@@ -125,7 +125,7 @@
         (else (+ (segment-length (car lst)) (perimeter (cdr lst)))))
   ) 		   	      
 
-;(perimeter test-segments) 		   	      
+(perimeter test-segments) 		   	      
 ; will yield the value 17.90611435520976
  		   	      
  		   	      
@@ -148,13 +148,13 @@
  		   	      
 ; define a procedure to copy the first point to the end of the list
 
+
+
 (define (create-polygon ptlist)
-  ; Copies the first point to the end of point list
   (define (copy-first-to-end ptlist)
     (cond ((null? ptlist) '())
           (else (append ptlist (list (car ptlist))))
           ))
-  ; Creates segments from elements n and n+1 for 0 <= n <= len ptlist (as we added the first element to the end)
   (define (create-segments ptlist)
     (cond ((or (null? ptlist)         ; At least 2 elements is required to create segments
                (null? (cdr ptlist)))
@@ -168,10 +168,10 @@
   ) 		   	      
  		   	      
 ; test: 		   	      
-;(create-polygon test-points) 		   	      
+(create-polygon test-points) 		   	      
  		   	      
 ; and 		   	      
-;test-segments 		   	      
+test-segments 		   	      
  		   	      
 ; should yield the same result 		   	      
  		   	      
@@ -193,13 +193,13 @@
   ) 		   	      
  		   	      
 ; test on predefined points p5 (6 2) and p6 (3 0)
-;(add-two-points p5 p6) 		   	      
+(add-two-points p5 p6) 		   	      
 ; will yield the point (9 2) 		   	      
 
 ; On test points from points_segs.scm
-;(add-two-points p1 p2) ; 0, 4
-;(add-two-points p3 p4) ; 6, 9
-;(add-two-points p1 p6) ; 3, 0	   	      
+(add-two-points p1 p2) ; 0, 4
+(add-two-points p3 p4) ; 6, 9
+(add-two-points p1 p6) ; 3, 0	   	      
  		   	      
 ; Next, generalize this to add up a list of points, by writing a procedure
 ; add-all-points that uses add-two-points recursively to add up all the
@@ -213,7 +213,7 @@
   ) 		   	      
  		   	      
 ; test 		   	      
-;(add-all-points test-points) 		   	      
+(add-all-points test-points) 		   	      
 ; will yield the point (15 15) 		   	      
  		   	      
  		   	      
@@ -232,7 +232,7 @@
   ) 		   	      
  		   	      
 ; test 		   	      
-;(centroid test-points) 		   	      
+(centroid test-points) 		   	      
 ; will yield the point (2.5 2.5)
  		   	      
  		   	      
@@ -259,7 +259,7 @@
   ) 		   	      
 
 ; test 		   	      
-;(centroid-alt test-points) 		   	      
+(centroid-alt test-points) 		   	      
 ; will again yield the value (2.5 2.5)
  		   	      
  		   	      
@@ -381,7 +381,7 @@
 ; (Number, Number -> Number) -> ((Number->Number), (Number->Number) -> (Number->Number))
  		   	      
 ; test: 		   	      
-;(((make-procedure-binop -) cos sin) 3.1415)
+(((make-procedure-binop -) cos sin) 3.1415)
 ; yields -1 		   	      
  		   	      
 ; So far we have made operations on numbers into operations on procedures,
@@ -411,10 +411,7 @@
  		   	      
 (define epsilon 0.000001)
 
-; square-a-procedure is (Number->Number)->(Number->Number)
-; and deriv is (Number->Number)->(Number->Number)
-; When we do (square-a-procedure), we try to given an argument of type (Number->Number)->(Number->Number),
-; however it expects an argument of (Number->Number), and therefore the argument types don't match.
+your-answer-here
  		   	      
 ; How about a ``squaring'' operation which applies to an operation like
 ; deriv?  No problem: 		   	      
@@ -426,7 +423,7 @@
 (define deriv-squared (square-an-operator-on-proc deriv))
  		   	      
 ; test: 		   	      
-;((deriv-squared (lambda (x) (* x x))) 5)
+((deriv-squared (lambda (x) (* x x))) 5)
 ; should give 100 		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;;::;::;:::
@@ -434,7 +431,7 @@
  		   	      
 ; What is the type of square-an-operator-on-proc?
  		   	      
-; ((Number->Number)->(Number->Number))->((Number->Number)->(Number->Number))		   	      
+your-answer-here 		   	      
  		   	      
  		   	      
 ; Of course, we can generalize these ideas in other ways.  For example, if
@@ -449,13 +446,13 @@
 ; argument, while (compose log square) returns the logarithm of the square
 ; of its argument: 		   	      
  		   	      
-;(log 2) 		   	      
+(log 2) 		   	      
 ;Value: .693147805599453 		   	      
  		   	      
-;((compose square log) 2) 		   	      
+((compose square log) 2) 		   	      
 ;Value: .4804530139182014 		   	      
  		   	      
-;((compose log square) 2) 		   	      
+((compose log square) 2) 		   	      
 ;Value: 1.3862943611198906 		   	      
  		   	      
 ; As we have used it above, the procedure compose takes as arguments two
@@ -472,10 +469,10 @@
 (define (thrice f) 		   	      
   (compose (compose f f) f)) 		   	      
  		   	      
-;((thrice square) 3) 		   	      
+((thrice square) 3) 		   	      
 ;Value: 6561 		   	      
  		   	      
-;(square (square (square 3))) 		   	      
+(square (square (square 3))) 		   	      
 ;Value: 6561 		   	      
  		   	      
  		   	      
@@ -497,10 +494,10 @@
       identity 		   	      
       (compose f (repeated f (- n 1)))))
  		   	      
-;((repeated sin 5) 3.1) 		   	      
+((repeated sin 5) 3.1) 		   	      
 ;Value: 4.1532801333692235e-2 		   	      
  		   	      
-;(sin(sin(sin(sin(sin 3.1))))) 		   	      
+(sin(sin(sin(sin(sin 3.1))))) 		   	      
 ;Value: 4.1532801333692235e-2 		   	      
  		   	      
  		   	      
@@ -511,12 +508,10 @@
 ; value as ((repeated f n) 0) (ignore issues of equality by assuming
 ; that "f "has a value of type "F" so that the whole expression will
 ; return a number)? 		   	      
-
-; For n = 27
-
-;(((thrice thrice) (lambda (x) (* 2 x))) 1)		   	      
-;((repeated (lambda (x) (* 2 x)) 27) 1) 		   	      
-
+ 		   	      
+your-answer-here 		   	      
+ 		   	      
+ 		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;;::;:::;;:
 ;;; Part 3: Curves as Procedures and Data
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;:;;;::;;;;
@@ -583,9 +578,7 @@
  		   	      
 ;    1. What is the type of unit-line-at?
  		   	      
-; (Number->(Unit-Interval->Point))
-;  or if we consider Curve = (Unit-Interval->Point)
-; (Number->Curve)
+your-answer-here 		   	      
  		   	      
 ;    2. Define a procedure diagonal-line with two arguments, a point and a
 ;       length, and returns a line of that length beginning at the point
@@ -606,23 +599,13 @@
  		   	      
 ;    3. What is the type of diagonal-line?
  		   	      
-; (Point, Number)->(Unit-Interval->Point)
-;  or
-; (Point,Number)->Curve
+your-answer-here 		   	      
  		   	      
 ;    4. Show some examples that test your procedure, and that show it
 ;       returns the correct value.
  		   	      
-(define diag-line-1 (diagonal-line (make-point 2 4) (* 3 (sqrt 2))))		   	      
-(define test-points-1 (list 0 0.25 0.5 0.75 1))
-;(map diag-line-1 test-points-1)
-; == t ==   => == x, y ==
-; At t=0    => 2   , 4 
-; At t=0.25 => 2.75, 4.75
-; At t=0.5  => 3.5 , 5.5
-; At t=0.75 => 4.25, 6.25
-; At t=1    => 5.0 , 7.0
-
+your-answer-here 		   	      
+ 		   	      
 ; Sample tests 		   	      
 ; ((diagonal-line p1 (* 5 (sqrt 2))) 0)
 ; Value: (0 0) 		   	      
@@ -736,19 +719,14 @@
 ; you decide how to stitch together the different kinds of operations you
 ; need. 		   	      
 
-; Applies an operator to each individual component of points
 (define (apply-to-points op)
   (lambda (pt1 pt2)
     (make-point (op (x-of pt1)
                     (x-of pt2))
                 (op (y-of pt1)
                     (y-of pt2)))))
-
-; Adds two points
 (define add-points (apply-to-points +))
-; Subtracts two points
 (define sub-points (apply-to-points -))
-
 (define (connect-ends start_curve end_curve)
   (define (map_x_to_start x) (* 2 x))
   (define (map_x_to_end x) (- (* 2 x) 1))
@@ -808,21 +786,8 @@
 ; using draw-points-squeezed-to-window. Briefly explain why the unit
 ; circles printed using unit-circle and alternative-unit-circle differ.
  		   	      
-;((draw-connected g1 200) unit-circle)
-;((draw-connected g2 200) alternative-unit-circle)
-
-;((draw-points-on g1 200) unit-circle)
-;((draw-points-on g2 200) alternative-unit-circle)
-
-;((draw-points-squeezed-to-window g1 200) unit-circle)
-;((draw-points-squeezed-to-window g2 200) alternative-unit-circle)
-
-; Alternative unit circle has points that become more far away as t grows
-; Therefore, since there are many points, the connected ones are approximately the same
-; For normal draw points on, alternative one has closer points in that section of the circle
-;  however when we squeeze it to the window and see the whole, the difference becomes appereant
-;  The growth of t starts smaller and becomes much bigger in alternative unit circle
-
+your-answer-here 		   	      
+ 		   	      
 ; (Note: when one of your graphics windows gets covered, its contents
 ; may get erased.  If that happens you need to bring the window
 ; forward and issue the drawing command once more.)
@@ -925,20 +890,14 @@
 ; without connecting them. But you should also be able to use your
 ; procedure with arbitrary curves. (You can find the description of
 ; procedure squeeze-rectangular-portion in the file curves.scm; you don't
-; need to understand it in detail to do this exercise.)	   	      
-
-; Creates a gosper curve with the level from given curve
-(define (make-gosper-curve-from level curve)
-  ((repeated gosperize level) curve))
-
+; need to understand it in detail to do this exercise.)
+ 		   	      
 (define (show-points-gosper window level number-of-points initial-curve)
-  ((draw-points-on window number-of-points)
-   ((squeeze-rectangular-portion -.5 1.5 -.5 1.5)
-    (make-gosper-curve-from level initial-curve)
-    )))
+your-answer-here 		   	      
+) 		   	      
  		   	      
 ;test 		   	      
-;(show-points-gosper g2 200 200 unit-line)
+(show-points-gosper g2 200 200 unit-line)
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;:;:;::;;;;
@@ -958,18 +917,14 @@
 ; point of the Gosper process, and repeated applications of the process
 ; will converge to this fixed point.)
  		   	      
-(define (arc t)
-  (let ((point-in-circle (* pi t)))
-    (make-point (sin point-in-circle)
-                (cos point-in-circle)))
+(define arc 		   	      
+your-answer-here 		   	      
   ) 		   	      
  		   	      
-; test
-
-;(show-points-gosper g1 2 500 arc)
-;(show-points-gosper g2 50 3000 arc)
-;(show-points-gosper g3 100 3000 arc)
-
+; test 		   	      
+(show-points-gosper g1 2 500 arc)
+(show-points-gosper g2 50 3000 arc)
+(show-points-gosper g3 100 3000 arc)
 ; notice that when levels become considerably large (here 50 and 100),
 ; the shapes become similar 		   	      
  		   	      
@@ -1026,53 +981,23 @@
 ;       (connect-ends 		   	      
 ;         ... 		   	      
 ;         ...)))) 		   	      
-
+ 		   	      
 (define (param-gosperize theta)
   (lambda (curve) 		   	      
     (put-in-standard-position 		   	      
-     (connect-ends
-      ((rotate-around-origin theta) curve)
-      ((rotate-around-origin (- theta)) curve)
-      ))))
-
-; to test
-
-(define (show-points-any window number-of-points the-curve)
-  ((draw-points-on window number-of-points)
-   ((squeeze-rectangular-portion -.5 1.5 -.5 1.5)
-    the-curve
-    )))
-(define (show-connected-any window number-of-points the-curve)
-  ((draw-connected window number-of-points)
-   ((squeeze-rectangular-portion -.5 1.5 -.5 1.5)
-    the-curve
-    )))
-
-; tests
-; These should be the same
-;(show-points-gosper g1 200 200 unit-line)
-;(show-points-any g2 200 (param-gosper 200 (lambda (level) pi/4)))	   	      
+     (connect-ends 		   	      
+your-answer-here 		   	      
+      )))) 		   	      
+ 		   	      
+ 		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;:;:;::;;:;
 ;;; Exercise 18: 		   	      
  		   	      
 ; Generate some parameterized Gosper curves where the angle changes with
 ; the level "n". We suggest starting with pi/(n+2) and pi/(1.3)^n. Save
 ; sample images and upload with your solutions.
-
-; Cannot use level=200 here, because that causes the curves to converge to a line
-; any level approx. over 20 looks close to a line or just like a line
-
-; Curve 1, pi / (n+2)
-(define gosper-with-pi/n+2 (param-gosper 10 (lambda (n) (/ pi (+ n 2)))))
-; Curve 2, pi / (1.3)^n
-(define gosper-with-pi/1.3^n (param-gosper 10 (lambda (n) (/ pi (expt 1.3 n)))))
-; Curve 3, pi / (n ^ 3)
-(define gosper-with-pi/n^3 (param-gosper 5 (lambda (n) (/ pi (expt n 3)))))
-
-;(show-points-any g1 1000 gosper-with-pi/n+2)
-;(show-points-any g2 4000 gosper-with-pi/1.3^n)
-;(show-points-any g3 4000 gosper-with-pi/n^3)
-
+ 		   	      
+ 		   	      
 ; We can now invent other schemes like the Gosper process, and use them to
 ; generate fractal curves. 		   	      
  		   	      
@@ -1096,21 +1021,9 @@
 ; Write a procedure kochize that generates Koch curves. (Teaser: You can
 ; generate the Koch curve by using param-gosper with an appropriate
 ; argument. Can you find this?)
-
-(define (kochize level)
-  (cond ((= level 0) unit-line)
-        (else
-         (let ((prev-iter (kochize (- level 1))))
-           (put-in-standard-position
-            (connect-ends
-             prev-iter
-             (connect-ends
-              ((param-gosperize (- (/ pi 3))) prev-iter)
-              prev-iter)))
-           )))
-  )
-
-;(show-connected-any g1 200 (kochize 2)) 		   	      
+ 		   	      
+your-answer-here 		   	      
+ 		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;:;:;::;:;;
 ;;; Exercise 20: 		   	      
@@ -1118,39 +1031,9 @@
 ; Save some pictures of your Koch curve at various levels (at least 3).
 ; Upload your Koch curve images. You can give name to Koch images with
 ; suffixes that define level and angle, for example ”Koch_1_-30”.
-
-;(show-connected-any g1 1000 (kochize 3))  		   	      
-;(show-connected-any g2 4000 (kochize 4))
-;(show-connected-any g3 16000 (kochize 5))
-
-; Angled version for different angle drawing
-(define (kochize-with-angle level angle)
-  (cond ((= level 0) unit-line)
-        (else
-         (let ((prev-iter (kochize (- level 1))))
-           (put-in-standard-position
-            (connect-ends
-             prev-iter
-             (connect-ends
-              ((param-gosperize (- angle)) prev-iter)
-              prev-iter)))
-           )))
-  )
-
-;(show-connected-any g1 1000 (kochize-with-angle 3 (/ pi -6)))  		   	      
-;(show-points-any g2 4000 (kochize-with-angle 4 (/ pi 4)))
-
-; For drawing snowflake from koch curve
-(define (kochize-snowflake level)
-  (let ((segment (kochize level)))
-    (connect-ends
-     segment
-     (connect-ends
-      ((rotate-around-origin (/ pi 1.5)) segment)
-      ((rotate-around-origin (/ pi 0.75)) segment)))))
-
-;(show-points-any g1 8000 (kochize-snowflake 3))
-
+ 		   	      
+your-answer-here 		   	      
+ 		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;;:;::;:;:;::;:;:
 ;;; Exercise 21: 		   	      
  		   	      
@@ -1170,67 +1053,12 @@
 ; have created, and show the expression you used to generate it. Feel free
 ; to create entirely new kinds of fractals if you wish. Save graphics that
 ; you have created and upload them with your submission.
-
-; To apply connect-ends to all curves in a list in reverse order
-;  so that we don't need to write too many connect-ends one inside another
-(define (pairwise-input-to-list-reverse-order func)
-  (lambda (lst)
-    (cond ((null? lst) #f)
-          ((null? (cdr lst)) (car lst))
-          (else (func ((pairwise-input-to-list-reverse-order func) (cdr lst)) (car lst))))))
-(define connect-all (pairwise-input-to-list-reverse-order connect-ends))
-
-; Like rotate-pi/2 but with 3pi
-(define (rotate-3pi/2 curve) 		   	      
-  (lambda (t) 		   	      
-    (let ((ct (curve t))) 		   	      
-      (make-point 		   	      
-       (y-of ct) 		   	      
-       (- (x-of ct)))))) 
-
-; Defines a hilbert curve of certain level
-;  which is space filling curve defined as in following
-;    http://mathworld.wolfram.com/HilbertCurve.html
-;    https://en.wikipedia.org/wiki/Hilbert_curve
-(define (hilbert level)
-  (cond ((= level 0) unit-line)
-        ((= level 1)
-         (let ((zeroth-hilbert (hilbert 0)))
-           (put-in-standard-position
-            (connect-all (list
-             ((rotate-around-origin (/ pi -2)) zeroth-hilbert)
-             zeroth-hilbert
-             ((rotate-around-origin (/ pi 2)) zeroth-hilbert)))))
-         )
-        (else
-         (let* ((prev-order (hilbert (- level 1)))
-                (line-length (/ 1 (- (expt 2 (- level 1)) 1)))
-                (prev-upper-left ((scale-x-y 1 -1) (rotate-pi/2 prev-order)))
-                (prev-bottom-left ((translate 0 (- line-length)) prev-order))
-                (prev-bottom-right ((translate line-length 0) prev-bottom-left))
-                (prev-upper-right ((scale-x-y 1 -1) ((translate 0 line-length) (rotate-3pi/2 prev-order))))
-                (middle-line-scaled ((scale line-length) unit-line))
-                (vertical-line-down ((rotate-around-origin (/ pi -2)) middle-line-scaled))
-                (vertical-line-up ((rotate-around-origin (/ pi 2)) middle-line-scaled)))
-           (put-in-standard-position
-            (connect-all (list prev-upper-left vertical-line-down prev-bottom-left middle-line-scaled prev-bottom-right vertical-line-up prev-upper-right))
-            ))
-         ))
-  )
-
-;(show-connected-any g1 10000 (hilbert 2))
-;(show-connected-any g2 100000 (hilbert 3))
-;(show-connected-any g3 1000000 (hilbert 4))
-
+ 		   	      
 ; We encourage you to work with your project partner on problem sets
 ; as long as you acknowledge it and so long as you observe the rules
 ; on collaboration (see the Comp101 Syllabus section on
-; Collaboration).
-
-; We worked with Ali Sardag and Cuneyt Yavuz
-;  however we followed the rules on collobation
-;  and nothing written got exchanged
-
+; Collaboration). 		   	      
+ 		   	      
 ; If you cooperated with other students, tutors, or others, please
 ; indicate your consultants' names.  Otherwise, write ``I worked alone
 ; using only the course reference materials.''
