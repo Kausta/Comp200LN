@@ -15,20 +15,25 @@
 
 ## Lecs
 
-- [Intro](Intro.md)
-- [Lec 2](Lec2.md)
-- [Lec 3](Lec3.md)
-- [Lec 4](Lec4.ipynb)
-- [Lec 5](Lec5.ipynb)
-- [Lec 6](Lec6.ipynb)
-- [Lec 7](Lec7.ipynb)
-- [Lec 8](Lec8.ipynb)
-- [Lec 9](Lec9.ipynb)
-- [Lec 10](Lec10.ipynb)
-- [Lec 11](Lec11.ipynb)
-- [Lec 12](Lec12.ipynb)
-- [Lec 13](Lec13.ipynb)
-- [Lec 14](Lec14.ipynb)
+- [Intro](./Lectures/Intro.md)
+- [Lec 2](./Lectures/Lec2.md)
+- [Lec 3](./Lectures/Lec3.md)
+- [Lec 4](./Lectures/Lec4.ipynb)
+- [Lec 5](./Lectures/Lec5.ipynb)
+- [Lec 6](./Lectures/Lec6.ipynb)
+- [Lec 7](./Lectures/Lec7.ipynb)
+- [Lec 8](./Lectures/Lec8.ipynb)
+- [Lec 9](./Lectures/Lec9.ipynb)
+- [Lec 10](./Lectures/Lec10.ipynb)
+- [Lec 11](./Lectures/Lec11.ipynb)
+- [Lec 12](./Lectures/Lec12.ipynb)
+- [Lec 13](./Lectures/Lec13.ipynb)
+- [Lec 14](./Lectures/Lec14.ipynb)
+- [Lec 15](./Lectures/Lec15.ipynb)
+- [Lec 16](./Lectures/Lec16.ipynb)
+- [Lec 17](./Lectures/Lec17.ipynb)
+- [Lec 18](./Lectures/Lec18.ipynb)
+
 
 ## Projects
 
@@ -38,3 +43,5 @@
   - [Folder](./HW/project1/)
 - [Project 2](./HW/project2.pdf)
   - [Folder](./HW/project2/)
+- [Project 3](./HW/project3.pdf)
+  - [Folder](./HW/project3/)
