@@ -79,6 +79,7 @@
 ;;; problem 2 ;;; 		   	      
 (define (table-insert-all! lst table)
   (cond ((not (table? table)) (error "Not a table" table))
+        ((not (pair? lst)) (error "Not a list or empty" lst)) ; (pair? nil) is false, so it includes null? lst
         (else
          (for-each (lambda (row-to-insert)
                      (table-insert! row-to-insert table))
@@ -106,7 +107,8 @@
 
 ; ? Filter already defined in databases.scm
 (define (filter pred lst) 		   	      
-  (cond ((null? lst) '()) 		   	      
+  (cond ((null? lst) '())
+        ((not (pair? lst)) (error "Not a list" lst)) ; since pair? '() is #f, we need to first look to null? lst, and then pair? lst
         ((pred (car lst)) 		   	      
          (cons (car lst) (filter pred (cdr lst))))
         (else (filter pred (cdr lst)))))
@@ -187,7 +189,10 @@
 ;;; problem 5 ;;; 		   	      
  		   	      
 (define (table-delete! pred table)
-your-answer-here 		   	      
+  (define (dont-delete row) (not (pred row)))
+  (let* ((filtered-table (table-select dont-delete table))
+         (filtered-data (get-table-data filtered-table)))
+    (change-table-data! table filtered-data))
   ) 		   	      
  		   	      
 ;; test cases 		   	      
@@ -199,43 +204,66 @@ your-answer-here
  		   	      
 ;; (table-display books) 		   	      
  		   	      
-;;; problem 6 ;;; 		   	      
+;;; problem 6 ;;;
+
+;; TODO: Check edge cases and whether check-value-fits-col works
+
+(define (check-value-fits-col col value)
+  (let* ((col-type (column-type col))
+         (checker (type-checker col-type)))
+    (if (checker value)
+        #t
+        (error "Value doesn't fit type" value col-type)))
+  )
+
 (define (table-update! pred column proc table)
-your-answer-here 		   	      
+  (let ((columns (get-table-columns table)))
+    (define (update-if-true row)
+      (cond ((pred row)
+             (let ((value (proc row)))
+               (check-value-fits-col (findf (lambda (col) (eq? (column-name col) column)) columns) value)
+               (row-col-replace row column value)))
+            (else row)))
+    (let ((updated-data (table-map update-if-true table)))
+      (change-table-data! table updated-data)) )
   ) 		   	      
 ;; test cases 		   	      
  		   	      
-;; (display "Testing Problem 6\n")
-;; (table-update! (lambda (row) (or (eq? (get 'name row) 'amy) (eq? (get 'name row) 'alex)))
-;;               'major 		   	      
-;;               (lambda (row) '9)
-;;               example-table)
-;; (table-display example-table)
+(display "Testing Problem 6\n")
+(table-update! (lambda (row) (or (eq? (get 'name row) 'amy) (eq? (get 'name row) 'alex)))
+               'major 		   	      
+               (lambda (row) '9)
+               example-table)
+(table-display example-table)
  		   	      
 ;;; problem 7 ;;; 		   	      
- 		   	      
+
 (define *type-table* 		   	      
-your-answer-here 		   	      
-) 		   	      
- 		   	      
-(define example-table2 		   	      
-your-answer-here 		   	      
-   ) 		   	      
- 		   	      
+  (append
+   *type-table*
+   (list
+    (list 'string string? string<?)))
+  ) 		   	      
+(define example-table2
+  (make-empty-table
+   (list (make-column 'name 'string)
+         (make-column 'major 'number)))
+  )		   	      
+
 ;; test cases 		   	      
-;; (display "Testing Problem 7\n")
-;; (table-insert! '("jen" 3) example-table2)
-;; (table-insert! '("ben" 6) example-table2)
-;; (table-insert! '("alex" 6) example-table2)
-;; (table-insert! '("amy" 12) example-table2)
-;; (table-insert! '("kim" 13) example-table2)
+(display "Testing Problem 7\n")
+(table-insert! '("jen" 3) example-table2)
+(table-insert! '("ben" 6) example-table2)
+(table-insert! '("alex" 6) example-table2)
+(table-insert! '("amy" 12) example-table2)
+(table-insert! '("kim" 13) example-table2)
  		   	      
  		   	      
-;; (table-display example-table2)
-;; (display "\nordered example-table2\n")
-;; (table-display 		   	      
-;;  (table-order-by 'name example-table2)
-;; ) 		   	      
+(table-display example-table2)
+(display "\nordered example-table2\n")
+(table-display 		   	      
+ (table-order-by 'name example-table2)
+) 		   	      
  		   	      
 ;;; problem 8 ;;; 		   	      
  		   	      
@@ -244,101 +272,132 @@ your-answer-here
 ;; position of x if it is in the list.
 ;; Ex: (get-pos '(1 2 3 4) 2) => 2
 ;;     (get-pos '(1 2 3 4) 5) => 0
-your-answer-here 		   	      
+
+(define (contains? lst x)
+  (let ((res (findf (lambda (y) (equal? x y)) lst))) ; Res is either x or #f
+    (if (not res)
+        #f
+        #t)))
+
+(define (get-pos lst x)
+  (define (iter curr-lst at)
+    (cond ((null? lst) 0)
+          ((equal? (car curr-lst) x) at)
+          (else (iter (cdr curr-lst) (+ at 1)))))
+  (iter lst 1))
+; 
+; your-answer-here : Above		   	      
+
 (define (make-enum-checker lst)
-your-answer-here 		   	      
+  (lambda (sym)
+    (contains? lst sym))
   ) 		   	      
 (define (make-enum-comparator lst)
-your-answer-here 		   	      
-) 		   	      
+  (lambda (x y)
+    (let ((first (get-pos lst x))
+          (second (get-pos lst y)))
+      (cond ((or (= first 0) (= second 0)) #f) ; Either one is not found, TODO: what should this return
+            (else (< first second))))) 
+  ) 		   	      
 (define *days* '(sunday monday tuesday Wednesday thursday friday saturday))
 (define day-checker (make-enum-checker *days*))
 (define day-comparator (make-enum-comparator *days*))
  		   	      
 ;; test cases 		   	      
-;; (display "Testing Problem 8\n")
-;; (day-checker 'monday)   ;=> #t
-;; (day-checker 7)         ;=> #f
-;; (day-comparator 'monday 'tuesday)   ;=> #t (monday is "less than" tuesday)
-;; (day-comparator 'friday 'sunday)    ;=> #f (sunday is before friday)
+(display "Testing Problem 8\n")
+(day-checker 'monday)   ;=> #t
+(day-checker 7)         ;=> #f
+(day-comparator 'monday 'tuesday)   ;=> #t (monday is "less than" tuesday)
+(day-comparator 'friday 'sunday)    ;=> #f (sunday is before friday)
  		   	      
  		   	      
 (define *type-table* 		   	      
-your-answer-here 		   	      
+ (append
+   *type-table*
+   (list
+    (list 'day day-checker day-comparator)))	   	      
 ) 		   	      
  		   	      
-;; (define example-table3 		   	      
-;;   (make-empty-table 		   	      
-;;    (list (make-column 'name 'string)
-;;          (make-column 'date 'day)
-;;          (make-column 'major 'number)))
-;;    ) 		   	      
+(define example-table3 		   	      
+  (make-empty-table 		   	      
+   (list (make-column 'name 'string)
+         (make-column 'date 'day)
+         (make-column 'major 'number)))
+   ) 		   	      
  		   	      
-;; (table-insert! '("jen" monday 3) example-table3)
-;; (table-insert! '("ben" sunday 6) example-table3)
-;; (table-insert! '("alex" friday 6) example-table3)
-;; (table-insert! '("amy" tuesday 1) example-table3)
-;; (table-insert! '("kim" saturday 2) example-table3)
+(table-insert! '("jen" monday 3) example-table3)
+(table-insert! '("ben" sunday 6) example-table3)
+(table-insert! '("alex" friday 6) example-table3)
+(table-insert! '("amy" tuesday 1) example-table3)
+(table-insert! '("kim" saturday 2) example-table3)
  		   	      
-;; (table-display example-table3)
-;; (display "\nordered example-table3\n")
-;; (table-display 		   	      
-;;  (table-order-by 'date example-table3)
-;; ) 		   	      
+(table-display example-table3)
+(display "\nordered example-table3\n")
+(table-display 		   	      
+ (table-order-by 'date example-table3)
+) 		   	      
  		   	      
 ;;; Problem 9 		   	      
 ;; Hint: Similar with Problem 8
 (define *gender* '(male female))
 (define gender-checker 		   	      
-your-answer-here 		   	      
-) 		   	      
+  (make-enum-checker *gender*) 		   	      
+  ) 		   	      
 (define gender-comparator 		   	      
-your-answer-here 		   	      
-) 		   	      
+  (make-enum-comparator *gender*)
+  ) 		   	      
 (define *race* '(white black red))
  		   	      
 (define race-checker 		   	      
-your-answer-here 		   	      
-) 		   	      
+  (make-enum-checker *race*) 		   	      
+  ) 		   	      
 (define race-comparator 		   	      
-your-answer-here 		   	      
-) 		   	      
- 		   	      
+  (make-enum-comparator *race*) 		   	      
+  ) 		   	      
+
 (define *type-table* 		   	      
-your-answer-here 		   	      
-) 		   	      
+  (append
+   *type-table*
+   (list
+    (list 'gender gender-checker gender-comparator)
+    (list 'race race-checker race-comparator)))	   	      
+  )
  		   	      
 ;;; Problem 10 		   	      
  		   	      
 (define person-table 		   	      
-your-answer-here 		   	      
+  (make-empty-table 		   	      
+   (list (make-column 'name 'string)
+         (make-column 'race 'race)
+         (make-column 'gender 'gender)
+         (make-column 'birthyear 'number))) 		   	      
 ) 		   	      
 ;;; tests 		   	      
-;; (display "Testing Problem 10\n")
-;; (table-insert! '("jen" white female 1983) person-table)
-;; (table-insert! '("axe" black male 1982) person-table)
-;; (table-display person-table)
+(display "Testing Problem 10\n")
+(table-insert! '("jen" white female 1983) person-table)
+(table-insert! '("axe" black male 1982) person-table)
+(table-display person-table)
  		   	      
  		   	      
 ;;; Problem 11 		   	      
  		   	      
 (define (make-person name race gender birthyear)
-your-answer-here 		   	      
+  (table-insert! (list name race gender birthyear) person-table)
   name) 		   	      
  		   	      
 ;; test cases 		   	      
  		   	      
-;; (display "Testing Problem 11\n")
+(display "Testing Problem 11\n")
  		   	      
-;; (define p1 (make-person "Alex" 'white 'male 1983))
-;; (define p2 (make-person "Clark" 'black 'male 1982))
-;; (table-display person-table)
+(define p1 (make-person "Alex" 'white 'male 1983))
+(define p2 (make-person "Clark" 'black 'male 1982))
+(table-display person-table)
  		   	      
 ;;; Note that you might delete the test people you created by typing
-;; (table-delete! (lambda (x) #t) person-table)
+(table-delete! (lambda (x) #t) person-table)
 ;;; And you can verify the removal operation by typing
-;; (display "\nDeleted Person Table\n")
-;; (table-display person-table)
+(display "\nDeleted Person Table\n")
+(table-display person-table)
 ;;; 		   	      
 ;;; Note that, you might need to create test people again in later questions
  		   	      
@@ -348,9 +407,13 @@ your-answer-here
 (define (person-name person) person)
  		   	      
 (define (lookup-person-row person)
-your-answer-here 		   	      
-  ) 		   	      
- 		   	      
+  (let* ((data (get-table-data person-table))
+         (result (findf (lambda (row) (equal? (get 'name row) person)) data)))
+    (cond ((not result) (error "Person not found in person table" person))
+          (else result))
+    )
+  )
+
 (define (person-race person) 		   	      
   (get 'race (lookup-person-row person)))
  		   	      
@@ -367,18 +430,25 @@ your-answer-here
  		   	      
 ;; test cases 		   	      
 ;;; Note that, you can create test people to check the selectors.
-;; (display "Testing Problem 12\n")
-;; (lookup-person-row p1) 		   	      
-;; (person-race p1) 		   	      
-;; (person-gender p1) 		   	      
-;; (person-birthyear p1) 		   	      
-;; (person-age p1) 		   	      
-;; (lookup-person-row "Sneijder")
+; Recreating the test people
+(define p1 (make-person "Alex" 'white 'male 1983))
+(define p2 (make-person "Clark" 'black 'male 1982))
+(table-display person-table)
+
+(display "Testing Problem 12\n")
+(lookup-person-row p1) 		   	      
+(person-race p1) 		   	      
+(person-gender p1) 		   	      
+(person-birthyear p1) 		   	      
+(person-age p1) 		   	      
+(lookup-person-row "Sneijder")
  		   	      
 ;;; Problem 13 		   	      
  		   	      
 (define (update-person-row! person colname newvalue)
-your-answer-here 		   	      
+  (let* ((person-row (lookup-person-row person))
+         (updated-row (row-col-replace person-row colname newvalue)))
+    (set-cdr! person-row (cdr updated-row)))		   	      
   ) 		   	      
  		   	      
 (define (set-person-name! person newname)
@@ -394,16 +464,21 @@ your-answer-here
   (update-person-row! person 'birthyear newbirthyear))
  		   	      
 ;; QUESTION What happens? Why? Comments?
-your-answer-here 		   	      
+your-answer-here
+; TODO: Complete this
+; Because the name has changed, alyssa is "allyssa-p-hacker", but the name in the table is "alyssa-p-hacker-bitdiddle"
+;   so we can't use it to change another field
+
  		   	      
 ;;; test cases 		   	      
- 		   	      
-;; (display "Testing Problem 13\n")
-;; (define alyssa (make-person "alyssa-p-hacker" 'black 'female 1978))
-;; (set-person-name! alyssa "alyssa-p-hacker-bitdiddle")  ; got married!
-;; (table-display person-table)
-;; (person-name alyssa) 		   	      
-;; (person-race alyssa) 		   	      
+
+; TODO: Recheck these
+;(display "Testing Problem 13\n")
+;(define alyssa (make-person "alyssa-p-hacker" 'black 'female 1978))
+;(set-person-name! alyssa "alyssa-p-hacker-bitdiddle")  ; got married!
+;(table-display person-table)
+;(person-name alyssa) 		   	      
+;(person-race alyssa) 		   	      
  		   	      
 ;;; Note: after running the test cases above, please comment out them again.
  		   	      

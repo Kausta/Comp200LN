@@ -56,87 +56,149 @@
  		   	      
 (define your-answer-here -1) 		   	      
 (load "databases.scm") 		   	      
- 		   	      
+
 ;;; Let's start 0_0 		   	      
 ;;; problem 1 ;;; 		   	      
  		   	      
 ;; your code should have the following general form
- 		   	      
-(define example-table 		   	      
-your-answer-here 		   	      
-   ) 		   	      
-your-answer-here 		   	      
- 		   	      
+
+(define example-table
+  (make-empty-table
+   (list (make-column 'name 'symbol)
+         (make-column 'major 'number)))
+  ) 		   	      
+(table-insert! '(ben 6) example-table)
+(table-insert! '(jen 3) example-table)
+(table-insert! '(amy 12) example-table)
+(table-insert! '(kim 13) example-table)
+(table-insert! '(alex 6) example-table)
+
 ;; test cases 		   	      
-;; (table-display example-table)
+ (table-display example-table)
  		   	      
 ;;; problem 2 ;;; 		   	      
 (define (table-insert-all! lst table)
-your-answer-here 		   	      
-) 		   	      
+  (cond ((not (table? table)) (error "Not a table" table))
+        (else
+         (for-each (lambda (row-to-insert)
+                     (table-insert! row-to-insert table))
+                   lst)))
+  ) 		   	      
 ;; test cases 		   	      
  		   	      
-;; (define books (make-empty-table
-;; 	       (list (make-column 'title 'symbol)
-;; 		     (make-column 'author 'symbol)
-;; 		     (make-column 'rating 'number))))
+ (define books (make-empty-table
+ 	       (list (make-column 'title 'symbol)
+ 		     (make-column 'author 'symbol)
+ 		     (make-column 'rating 'number))))
  		   	      
  		   	      
-;; (table-insert-all! '((sicp abelson-sussman 8)
-;; 		     (return-of-the-king jrr-tolkien 9)
-;; 		     (treatment-of-subordinates darth-vader 4)
-;; 		     (project-grading tom 2)
-;; 		     (all-things-stata frank-gehry 5)
-;; 		     (biting-the-hand-that-feeds-me my-cat 1))
-;; 		   books) 		   	      
-;; (table-display books) 		   	      
- 		   	      
+ (table-insert-all! '((sicp abelson-sussman 8)
+ 		     (return-of-the-king jrr-tolkien 9)
+ 		     (treatment-of-subordinates darth-vader 4)
+ 		     (project-grading tom 2)
+ 		     (all-things-stata frank-gehry 5)
+ 		     (biting-the-hand-that-feeds-me my-cat 1))
+ 		   books) 		   	      
+ (table-display books)
+
 ;;; problem 3 ;;; 		   	      
 ;; Hint: Writing (filter predicate lst) might be helpful
-your-answer-here 		   	      
+
+; ? Filter already defined in databases.scm
+(define (filter pred lst) 		   	      
+  (cond ((null? lst) '()) 		   	      
+        ((pred (car lst)) 		   	      
+         (cons (car lst) (filter pred (cdr lst))))
+        (else (filter pred (cdr lst)))))
+ 		   	       		   	      
 (define (table-select selector table)
-your-answer-here 		   	      
-  ) 		   	      
+  (cond ((not (table? table)) (error "Not a table" table))
+        (else
+         (let ((selected-rows (filter
+                               selector
+                               (get-table-data table))))
+           (make-table (get-table-columns table) selected-rows))
+         )
+        )
+  )
+; TODO: It says internal for make-table, should i use make-empty-table + insert all
  		   	      
 ;; test cases 		   	      
  		   	      
-;; (display "Testing Problem 3\n")
-;; (table-display 		   	      
-;;  (table-select 		   	      
-;;   (lambda (row) 		   	      
-;;     (> (get 'rating row) 4))
-;;   books)) 		   	      
+ (display "Testing Problem 3\n")
+ (table-display 		   	      
+  (table-select 		   	      
+   (lambda (row) 		   	      
+     (> (get 'rating row) 4))
+   books)) 	   	      
  		   	      
 ;;; problem 4 ;;; 		   	      
  		   	      
 ;; Hint: Be careful about the comparator operator of the corresponding
 ;; row.  Writing a (get-column-type row column-name) might be helpful.
-your-answer-here 		   	      
+
+; TODO: I defined get-column-type to find operator here
+; but a make-row-comparator is already defined ?
+
+; No findf in R5RS
+; Returns first occurance of pred being true in lst
+(define (findf pred lst)
+  (cond ((null? lst) #f)
+        ((pred (car lst))
+         (car lst))
+        (else (findf pred (cdr lst))))
+  )
+
+(define (get-column-type row col-name)
+  (cond ((not (row? row)) (error "Not a row" row))
+        (else
+         (let* ((columns (row-columns row))
+                (found-col
+                 (findf (lambda (x) (eq? (column-name x) col-name))
+                        columns)))
+           (cond ((not found-col) (error "Column not found" col-name))
+                 (else (column-type found-col)))))
+        )
+  )
+
+; Tests for get-column-type
+(get-column-type (table-nth-row 1 books) 'rating)
+(get-column-type (table-nth-row 1 books) 'author)
+(get-column-type (table-nth-row 1 books) 'not-a-column)
+
 (define (table-order-by column table)
-your-answer-here 		   	      
-) 		   	      
+  (cond ((not (table? table)) (error "Not a table" table))
+        (else
+         (let* ((operator (make-row-comparator column table))
+                (sorted-rows (sort operator (get-table-data table))))
+           (make-table (get-table-columns table) sorted-rows)))
+        )
+  ) 		   	      
 ;; test cases 		   	      
-;; (display "Testing Problem 4\n")
-;; (table-display 		   	      
-;;  (table-order-by 'rating books)
-;; ) 		   	      
-;; 		   	      
-;; (table-display 		   	      
-;;  (table-order-by 'title books)
-;; ) 		   	      
+ (display "Testing Problem 4\n")
+ (table-display 		   	      
+  (table-order-by 'rating books)
+ ) 		   	      
+ 		   	      
+ (table-display 		   	      
+  (table-order-by 'title books)
+ ) 		   	      
  		   	      
 ;;; problem 5 ;;; 		   	      
  		   	      
 (define (table-delete! pred table)
-your-answer-here 		   	      
+  (define (dont-delete row) (not (pred row)))
+  (let* ((filtered-table (table-select dont-delete table))
+         (filtered-data (get-table-data filtered-table)))
+    (change-table-data! table filtered-data))
   ) 		   	      
  		   	      
 ;; test cases 		   	      
-;; (display "Testing Problem 5\n")
-;; (table-delete! 		   	      
-;;  (lambda (row) 		   	      
-;;   (eq? (get 'author row) 'my-cat))
-;; books) 		   	      
+ (display "Testing Problem 5\n")
+ (table-delete! 		   	      
+  (lambda (row) 		   	      
+   (eq? (get 'author row) 'my-cat))
+ books) 		   	      
  		   	      
 ;; (table-display books) 		   	      
  		   	      
