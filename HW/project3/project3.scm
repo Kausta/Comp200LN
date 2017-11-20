@@ -281,7 +281,8 @@
 
 (define (get-pos lst x)
   (define (iter curr-lst at)
-    (cond ((null? lst) 0)
+    (cond ((null? lst) 0) ; pair? is below null? because it also gives false for null list
+          ((not (pair? lst)) (error "Not a list" curr-lst))
           ((equal? (car curr-lst) x) at)
           (else (iter (cdr curr-lst) (+ at 1)))))
   (iter lst 1))
@@ -483,27 +484,52 @@ your-answer-here
 ;;; Note: after running the test cases above, please comment out them again.
  		   	      
 ;;; Problem 14 		   	      
- 		   	      
-(define life-table 		   	      
-your-answer-here 		   	      
-) 		   	      
- 		   	      
+ 		   	     
+
+; Every field (including the year) is a number
+; So we map column names to cols of column name, 'number
+(define life-table
+  ((lambda (cols)
+    (make-empty-table 
+      (map (lambda (colname) (make-column colname 'number)) cols))
+    ) `(year 
+        all-all all-male all-female 
+        white-all white-male white-female 
+        black-all black-male black-female) )
+  )
 (table-insert-all! life-expect-data life-table)
  		   	      
-;; (display "Selecting 1950\n")
-;; (table-display 		   	      
-;;  (table-select 		   	      
-;;  (lambda (row) 		   	      
-;;    (= (get 'year row) 1950))
-;;  life-table)) 		   	      
+(display "Testing Problem 14\n")
+(display "Selecting 1950\n")
+(table-display
+  (table-select
+    (lambda (row)
+      (= (get 'year row) 1950))
+    life-table))
  		   	      
 ;;; Problem 15 		   	      
-your-answer-here 		   	      
+your-answer-here 		   	     
+; TODO: The upper your answer here
+
 (define (convert-lifetable lst)
 ;; Converts the data to the (year race gender expected) format
-your-answer-here 		   	      
-) 		   	      
- 		   	      
+  ; Extracts data of given race, gender, and 0 based index target expected field
+  (define (extract race gender expected-at)
+    (map 
+      (lambda (row)
+        (list (list-ref row 0) race gender (list-ref row expected-at)))
+      lst)
+    )
+  ; I wasn't sure whether to have all's, but since they're fields of gender and race
+  ;  and gender and race fields don't have all, so it was more sensical to skip alls
+  (let ((white-male (extract 'white 'male 5))
+        (white-female (extract 'white 'female 6))
+        (black-male (extract 'black 'male 8))
+        (black-female (extract 'black 'female 9)))
+   (append white-male white-female black-male black-female))
+)
+; TODO: Instead of multiple complete loops, handle all in one loop above
+     		   	      
 ;; test cases 		   	      
 your-answer-here 		   	      
  		   	      
@@ -527,10 +553,17 @@ your-answer-here
  		   	      
 ;;; Problem 16 		   	      
 (display "\nTesting Problem 16\n")
-(define problem16-table 		   	      
-your-answer-here 		   	      
+(define problem16-table
+  (table-select 
+    (lambda (row)
+      (let ((year (get 'year row))
+            (race (get 'race row))
+            (gender (get 'gender row))) 
+        (and (>= year 1950) (<= year 1959) (equal? race 'white) (equal? gender 'female))))
+    life-table-new)
   ) 		   	      
- 		   	      
+; TODO: Get comparators for the one aboce
+
 ;;; QUESTION Was life expectancy for white women steadily increasing
 ;;; in this decade? 		   	      
 your-answer-here 		   	      
@@ -543,16 +576,47 @@ your-answer-here
 ;; between 1950 and 1959 		   	      
 ;; 		   	      
 your-answer-here 		   	      
+; TODO: Past the output
+
+(define problem16-black-female-table
+  (table-select 
+    (lambda (row)
+      (let ((year (get 'year row))
+            (race (get 'race row))
+            (gender (get 'gender row))) 
+        (and (>= year 1950) (<= year 1959) (equal? race 'black) (equal? gender 'female))))
+    life-table-new)
+  )
  		   	      
+(table-display 		   	      
+  (table-order-by 'expected problem16-black-female-table)
+) 		   	      
+ 
 ;;; Problem 17 		   	      
  		   	      
 (define p3 (make-person "GeorgeBest" 'white 'female 1987))
 (define p4 (make-person "Lizarazu" 'white 'male 1940))
  		   	      
 (define (expected-years person)
-your-answer-here 		   	      
+  (let ((p-year (person-birthyear person))
+        (p-race (person-race person))
+        (p-gender (person-gender person))
+        (p-age (person-age person)))
+    (let ((person-data
+           (table-select 
+            (lambda (row)
+              (let ((year (get 'year row))
+                    (race (get 'race row))
+                    (gender (get 'gender row))) 
+                (and (= year p-year) (equal? race p-race) (equal? gender p-gender))))
+            life-table-new)))
+      (if (empty-table? person-data)
+          (error "Data not found for given person" person)
+          (- (get 'expected (table-nth-row 0 person-data)) p-age))
+      )
+    )
   ) 		   	      
 ;; test cases 		   	      
-(display "Testing problem 17") 		   	      
+(display "Testing problem 17\n") 		   	      
 (expected-years p3) 		   	      
 (expected-years p4) 		   	      
