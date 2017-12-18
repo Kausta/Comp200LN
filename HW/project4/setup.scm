@@ -133,6 +133,21 @@
   ; This is add-thing because we want to make it silent (and (ask screen 'DEITY-MODE #f) doesn't work here), and also
   ; we know that she doesn't have, it is in the same room, it is mobile, etc... (but mainly bec of above)
   (ask akame 'ADD-THING murasame)
+
+  ; Magicians
+  (define raistlin (create-autonomous-magician 'raistlin (pick-random rooms) 2 100 10))
+  (define lighting-skill (make-skill 'lighting 50 (lambda (user target) (ask target 'SUFFER 10))))
+  (ask raistlin 'learn-skill lighting-skill)
+  
+  (define duygu (create-autonomous-magician 'duygu (pick-random rooms) 3 40 20))
+  (define eat-person-skill (make-skill 'eat-person 20 (lambda (user target) (ask user 'SUFFER 1) (ask target 'SUFFER 2))))
+  (ask duygu 'learn-skill eat-person-skill)
+  (define useless-skill (make-skill 'useless 5 (lambda (user target)
+                                                 (ask user 'SAY (list "I am useless."))
+                                                 (ask target 'SAY (list "Yes, you are")))))
+  (ask duygu 'learn-skill useless-skill)
+  
+  
   'populated-players) 		   	      
  		   	      
 (define (populate-bombs rooms) 		   	      
@@ -141,12 +156,12 @@
   (create-bomb 'ALIVE-BOMB (pick-random rooms) 10)
   (create-bomb 'HOME-MADE (pick-random rooms) 4)
   (create-bomb 'HAND-BOMB (pick-random rooms) 7)
-  ;(create-bomb-with-timer 'tBomb1 (pick-random rooms) 10)
-  ;(create-bomb-with-timer 'tBomb1 (pick-random rooms) 5)
-  ;(create-bomb-with-timer 'tBomb3 (pick-random rooms) 7)
-  ;(create-bomb-with-timer 'tBomb4 (pick-random rooms) 100)
-  ;(create-bomb-with-timer 'tBomb5 (pick-random rooms) 8)
-  ;(create-bomb-with-timer 'tBomb6 (pick-random rooms) 20)
+  (create-bomb-with-timer 'tBomb1 (pick-random rooms) 10)
+  (create-bomb-with-timer 'tBomb2 (pick-random rooms) 5)
+  (create-bomb-with-timer 'tBomb3 (pick-random rooms) 7)
+  (create-bomb-with-timer 'tBomb4 (pick-random rooms) 100)
+  (create-bomb-with-timer 'tBomb5 (pick-random rooms) 8)
+  (create-bomb-with-timer 'tBomb6 (pick-random rooms) 20)
   'populated-bombs) 		   	      
  		   	      
 (define heaven 'will-be-set-by-setup)
@@ -166,7 +181,7 @@
  		   	      
     ;; The initial point of no return
     (set! heaven (create-place 'heaven))
-    (set! me (create-avatar name (pick-random rooms)))
+    (set! me (create-magician-avatar name (pick-random rooms) 50 10))
     (ask screen 'SET-ME me) 		   	      
     (set! all-rooms rooms) 		   	      
     (set! death-exit (make-exit nil 'heaven heaven))
