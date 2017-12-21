@@ -78,7 +78,7 @@
         ((reset? exp) (eval-reset exp env)) ; reset!
         ((if? exp) (eval-if exp env))
         ((lambda? exp) 		   	      
-         (make-procedure (lambda-parameters exp) (lambda-body exp) env))
+         (make-procedure (lambda-parameters exp) (lambda-body exp) env (lambda-memo? exp)))
         ((begin? exp) (eval-sequence (begin-actions exp) env))
         ((loop? exp) (eval-loop exp env)) ; loop
         ((cond? exp) (m-eval (cond->if exp) env))
@@ -100,7 +100,9 @@
 ;;; described in the exercise. 		   	      
  		   	      
 ; New code:
+; Save primitives defined in eval.scm
 (define old-primitive-procedures (primitive-procedures))
+; Add the other primitives to the old ones
 (define (primitive-procedures)
   (append
    old-primitive-procedures
@@ -116,7 +118,8 @@
     (list '<= <=)
     (list 'append append)
     (list 'length length)
-    (list 'map map))))
+    (list 'map map)
+    (list 'write-line write-line))))
 ; Test cases: 		   	      
 your-answer-here 		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;::;;::;::;
@@ -135,18 +138,23 @@ your-answer-here
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;::;;:::;;:
 ; New code: 		   	      
- 		   	      
+
+; Updates set and now adds the new value to the binding just after the variable instead of replacing the other
 (define (set-binding-value! binding val)
   (set-cdr! binding (cons val (cdr binding))))
 
+; Abstraction/accessors for reset 
 (define (reset? exp) (tagged-list? exp 'reset!))
 (define reset-variable cadr)
 
+; Resets binding value if there is a previous value
+; Called from reset-variable-value! which founds the binding
 (define (reset-binding-value! binding)
   (if (<= (length binding) 2)
-      (error "Cannot reset variable, already at first value" binding)
+      (error "ERROR: No value to reset!")
       (set-cdr! binding (cddr binding))))
 
+; Finds the binding for the variable to pass through to reset-binding-value!
 (define (reset-variable-value! var env)
   (if (eq? env the-empty-environment)
       (error "Unbound variable -- LOOKUP" var)
@@ -156,6 +164,7 @@ your-answer-here
 	    (reset-binding-value! binding)
 	    (reset-variable-value! var (enclosing-environment env))))))
 
+; Evaluates a reset expression in the given env
 (define (eval-reset exp env)
   (reset-variable-value! (reset-variable exp)
                          env))
@@ -186,6 +195,7 @@ your-answer-here
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;:::;::;:;:
 ; New code:
 
+; Loop abstraction/accessors
 (define (loop? exp) (tagged-list? exp 'loop))
 (define loop-until cadr) ; Second is until expression
 (define loop-return caddr) ; Third is return expression
@@ -200,6 +210,7 @@ your-answer-here
         (next)))
   (next))
 
+; Evaluates the given loop
 (define (eval-loop exp env)
   (run-loop (loop-until exp)
             (loop-return exp)
@@ -227,9 +238,12 @@ your-answer-here
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;::;;;:
+; Accessors
 (define first-and-expr car) 		   	      
 (define rest-and-exprs cdr)
 
+; Using the uninterned symbol api (available in the r5rs in drracket environment) to handle possible collusion with values in macro and in content
+;  so this is used to create hygienic and/or macros
 ; The returned symbol looks like the initial one, but it is not equivalent
 ; e.g (eq? (to-new-symbol 'a) (to-new-symbol 'a)) is #f
 ; so we can get hygienic and/or (since this is uninterned, it is not writible by hand, and different from the previous uninterned ones)
@@ -238,15 +252,16 @@ your-answer-here
 (define (new-val-symbol)
   (to-new-symbol '**val**))
 
+; Converts a given and expression to a single layer if expression and another and expression with one less case
 (define (and->if expr) 		   	      
   (let ((clauses (and-exprs expr)))
-    (cond ((null? clauses) #t)
-          ((null? (rest-and-exprs clauses)) (first-and-expr clauses)) ; Returns last exp
-          (else
-           (let ((val-symbol (new-val-symbol)))
-             (make-let
+    (cond ((null? clauses) #t) ; No clauses, so return true
+          ((null? (rest-and-exprs clauses)) (first-and-expr clauses)) ; Returns last exp if there is only one exp
+          (else ; Convert to if
+           (let ((val-symbol (new-val-symbol))) ; Get a fresh uninterned val symbol
+             (make-let 
               (list
-               (list val-symbol (first-and-expr clauses)))
+               (list val-symbol (first-and-expr clauses))) ; Save the evaluation in the value
               (list
                (make-if val-symbol ; If true
                         (make-and (rest-and-exprs clauses)) ; Return another and clause with remaining
@@ -258,16 +273,18 @@ your-answer-here
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;::;;::
+; Accessors
 (define first-or-expr car) 		   	      
 (define rest-or-exprs cdr) 		   	      
 
+; Converts a given or expression to a single layer if expression and another or expression with one less case
 (define (or->if expr) 		   	      
   (let ((clauses (or-exprs expr)))
-    (cond ((null? clauses) #f)
+    (cond ((null? clauses) #f) ; No clauses, so return false
           (else
-           (let ((val-symbol (new-val-symbol)))
+           (let ((val-symbol (new-val-symbol))) ; Get a fresh uninterned val symbol
              (make-let
-              (list (list val-symbol (first-or-expr clauses)))
+              (list (list val-symbol (first-or-expr clauses))); Save the evaluation in the value
               (list
                (make-if val-symbol ; If true
                         val-symbol ; Return it
@@ -303,15 +320,16 @@ your-answer-here
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;::;;;:
 (define (loop2? expr) (tagged-list? expr 'loop2))
 
+; Converts a given loop2 expression to a single layer if expression and another loop expression
 (define (loop->if expr) 		   	     
   (make-begin
    (append
-    (loop-exps expr)
+    (loop-exps expr) ; Add the body
     (list
      (make-if
-      (loop-until expr)
-      (loop-return expr)
-      expr)
+      (loop-until expr) ; If until expression
+      (loop-return expr); then return the return expression
+      expr) ; Otherwise another loop2 expressions
      )))	   	      
   ) 		   	       		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;::;;:;
@@ -336,8 +354,127 @@ your-answer-here
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;::;:::
-; New code: 		   	      
-your-answer-here 		   	      
+; New code:
+
+; Since these tags are quoted once in input, they're quoted twice here
+(define lambda-memo-tag ''memo)
+(define lambda-no-memo-tag ''no-memo)
+; Gets the memo arg for the lambda expression
+(define (lambda-memo-arg lambda-exp) (cadr lambda-exp))
+; Returns a boolean value that indicates whether the given lambda expression is a memoized one
+(define (lambda-memo? lambda-exp)
+  ; When we compare ''memo and ''memo (which are 'memo in the input), only equal? returns true, eq? and eqv? return false
+  (equal? (lambda-memo-arg lambda-exp) lambda-memo-tag))
+
+; Accessors for lambda with memoization
+(define (lambda-parameters lambda-exp) (caddr lambda-exp))
+(define (lambda-body lambda-exp) (cdddr lambda-exp))
+; Updated make lambda
+(define (make-lambda memo? params body) (append (list 'lambda memo? params) body))
+
+; Gets the definiton variable of a define exp
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+      (cadr exp)
+      (caadr exp)))
+; Gets the memo argument of a define exp that is syntetic sugar to lambda
+(define (definition-memo-arg exp)
+  (if (symbol? (cadr exp))
+      (error "A variable cannot have memo tag!" exp)
+      (cadadr exp)))
+; Gets the arguments of a define exp that is syntetic sugar to lambda
+(define (definiton-arguments exp)
+  (if (symbol? (cadr exp))
+      (error "A variable cannot have memo tag!" exp)
+      (cddadr exp)))
+; Gets the value of an exp or converts it to a lambda expressions
+(define (definition-value exp)
+  (if (symbol? (cadr exp)) 		   	      
+      (caddr exp) 		   	      
+      (make-lambda (definition-memo-arg exp) (definiton-arguments exp) (cddr exp))))  ; memo, formal params, body
+
+; Converts a let expression to a non memoized lambda expressions
+(define (let->application expr)
+  (let ((names (let-bound-variables expr))
+        (values (let-values expr))
+        (body (let-body expr)))
+    (make-application (make-lambda lambda-no-memo-tag names body)
+		      values)))
+
+; Memoization binding abstraction, that is a list of arguments and the result
+(define (memo-binding args result)
+  (list args result))
+; Accessors
+(define memo-args car)
+(define memo-result cadr)
+
+; Memo List is the data type used for memoization, it is an assoc list of memo-bindings with the tag 'memo-list
+
+; Memo list type tag
+(define memo-list-tag 'memo-list)
+; Memo list constructor
+(define (memo-list all-args all-results)
+  (list memo-list-tag (map memo-binding all-args all-results)))
+; Type check
+(define (memo-list? m-list)
+  (tagged-list? m-list memo-list-tag))
+; Accessors
+(define memo-list-body cadr)
+; Adds a args/result binding to the memoization values
+(define (add-memoized-value! m-list args result)
+  (if (not (memo-list? m-list))
+      (error "Cannot add memo-binding to non memo-list variable" m-list)
+      (set-car! (cdr m-list) (append (list (make-binding args result)) (memo-list-body m-list)))
+      ))
+; Finds a memo result from the memoization list, returns #f if not found (like assoc)
+(define (find-memo-result m-list args)
+  (if (not (memo-list? m-list))
+      (error "Cannot find memo-binding in non memo-list variable" m-list)
+      (assoc args (memo-list-body m-list)) ; Assoc uses equal? to compare, so we are fine with lists as arguments
+      ))
+
+; Updated make procedure that has memo-list or 'none as the fifth element
+(define (make-procedure parameters body env is-memo?)
+  (let ((m-list (if is-memo?
+                    (memo-list '() '())
+                    'none)))
+    (list 'procedure parameters body env m-list)))
+
+(define (fifth p) (fourth (cdr p)))
+; Returns the memoization for the function if it is memoized, 'none otherwise
+(define (procedure-mlist proc) (fifth proc)) 
+; Gets whether the proc is memoized
+(define (procedure-memo? proc) (not (equal? (procedure-mlist proc) 'none))) 
+
+; Updated m-apply that supports memoization
+(define (m-apply procedure arguments)
+  ; Apply normally if there is no memoization
+  (define (apply-no-memo) 
+    (eval-sequence 		   	      
+          (procedure-body procedure)
+          (extend-environment (procedure-parameters procedure)
+                              arguments
+                              (procedure-environment procedure))))
+  ; Apply a memoized procedure
+  (define (apply-memo)
+    ; Search for the previous memoization result
+    (let* ((mlist (procedure-mlist procedure))
+           (memoized-result (find-memo-result mlist arguments)))
+      (cond (memoized-result (memo-result memoized-result)) ; If there is a previously calculated result, return it
+            (else ; Otherwise calculate the value by evaluating the function
+             (let ((result (apply-no-memo))) ; Apply as if there were no memoization
+               (add-memoized-value! mlist arguments result) ; Add the value to the memoization list
+               result ; And return the value
+               )))
+      ))
+  (cond ((primitive-procedure? procedure)
+         (apply-primitive-procedure procedure arguments)) ; Primitive procedures are normally applied
+        ((compound-procedure? procedure)
+         (cond ((procedure-memo? procedure) (apply-memo)); Memoized Procedure
+               (else (apply-no-memo)) ; Non Memoized Procedure
+               ))
+        (else (error "Unknown procedure type -- APPLY" procedure))))
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;:::;;;
  		   	      
  		   	      
@@ -345,7 +482,35 @@ your-answer-here
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;:::;;:
 ; Test cases:
 (refresh-global-environment)
-your-answer-here 		   	      
+#|
+;;; M-Eval input:
+(define fib
+  (lambda 'memo (n)
+    (display "Fib: ")
+    (write-line n)
+    (cond ((= n 1) 1)
+          ((= n 2) 1)
+          (else (+ (fib (- n 1)) (fib (- n 2)))))))
+
+;;; M-Eval value:
+#<void>
+
+;;; M-Eval input:
+(fib 10)
+Fib: 10
+Fib: 9
+Fib: 8
+Fib: 7
+Fib: 6
+Fib: 5
+Fib: 4
+Fib: 3
+Fib: 2
+Fib: 1
+
+;;; M-Eval value:
+55
+|#
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;:;;;::;;;;;::;;;;
  		   	      
 ;;;;;;;::;::::::;;;::::;;;;:::;:::;;::;;;:;::;;::;::;:;;;:::;;:;::;::;;::;::;
