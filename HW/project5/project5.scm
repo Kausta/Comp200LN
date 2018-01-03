@@ -118,10 +118,51 @@
     (list '<= <=)
     (list 'append append)
     (list 'length length)
-    (list 'map map)
     (list 'write-line write-line))))
 ; Test cases: 		   	      
-your-answer-here 		   	      
+
+;;; M-Eval input:
+; (* 4 3)
+;;; M-Eval value:
+; 12
+
+;;; M-Eval input:
+;(/ 6 4)
+;;; M-Eval value:
+;3/2
+
+;;; M-Eval input:
+;(write-line (length (list 1 2 3 4)))
+;4
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(append (list 1 2) (list 3 4))
+;;; M-Eval value:
+;(1 2 3 4)
+
+;;; M-Eval input:
+;(cadr (list 1 2 3 4))
+;;; M-Eval value:
+;2
+
+;;; M-Eval input:
+;(cddr (list 1 2 3 4))
+;;; M-Eval value:
+;(3 4)
+
+;;; M-Eval input:
+;(newline)
+
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(>= 2 3)
+;;; M-Eval value:
+;#f
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;::;;::;::;
  		   	      
 		   	      
@@ -174,7 +215,114 @@ your-answer-here
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;:::;::;;;:
 ; Test cases: 		   	      
-your-answer-here 		   	      
+;;; M-Eval input:
+;(define x 2)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;x
+;;; M-Eval value:
+;2
+
+;;; M-Eval input:
+;(set! x 3)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(set! x 4)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;x
+;;; M-Eval value:
+;4
+
+
+;;; M-Eval input:
+;(reset! x)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;x
+;;; M-Eval value:
+;3
+
+;;; M-Eval input:
+;(reset! x)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;x
+;;; M-Eval value:
+;2
+
+;;; M-Eval input:
+;(reset! x)
+; ERROR: No value to reset!
+
+;----
+
+;;; M-Eval input:
+;(define l (list 1 2 3))
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;l
+;;; M-Eval value:
+;(1 2 3)
+
+;;; M-Eval input:
+;(set! l (append l (list 4)))
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;l
+;;; M-Eval value:
+;(1 2 3 4)
+
+;;; M-Eval input:
+;(reset! l)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;l
+;;; M-Eval value:
+;(1 2 3)
+
+;----
+
+;;; M-Eval input:
+;(define a 'aa)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(define a 'ab)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;a
+;;; M-Eval value:
+;ab
+
+;;; M-Eval input:
+;(reset! a)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;a
+;;; M-Eval value:
+;aa
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;:::;::;;:;
  		   	      
 	   	      
@@ -223,7 +371,30 @@ your-answer-here
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;:::;::;:::
 ; Test cases: 		   	      
-your-answer-here 		   	      
+;;; M-Eval input:
+;(let ((x '()))
+;  (loop (> (length x) 3) x
+;  (set! x (cons '* x))
+;  (display x)))
+;(*)(* *)(* * *)(* * * *)
+;;; M-Eval value:
+;(* * * *)
+
+;;; M-Eval input:
+;(define i 0)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(loop (>= i 4)
+;      (begin (newline) (* i 2))
+;      (display i) (display " ")
+;      (set! i (+ i 1)))
+;0 1 2 3
+
+;;; M-Eval value:
+;8
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;::;:::;:::;;;
 
   		   	      
@@ -296,14 +467,45 @@ your-answer-here
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;::;:;:
-your-answer-here 		   	      
+; m-eval is modified above, so don't know know what to put here ? 		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;::;::;		   	      
  		   	      
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;::;:::
 ;;; Modify m-eval to handle "and" and "or" as special forms and give
-;;; some test examples: 		   	      
-your-answer-here 		   	      
+;;; some test examples:
+
+;;; M-Eval input:
+;(and (begin (display "a ") (> 6 5))
+;     (begin (display "b ") (< 6 5))
+;     (begin (display "c ") (+ 6 5)))
+;a b 
+;;; M-Eval value:
+;#f
+
+;;; M-Eval input:
+;(and (begin (display "1 ") #t)
+;     (begin (display "2 ") 4)
+;     (begin (display "3") (list 1 2 3 4)))
+;1 2 3
+;;; M-Eval value:
+;(1 2 3 4)
+
+;;; M-Eval input:
+;(or (begin (display "once ") #f)
+;    (begin (display "and ") #f)
+;    (begin (display "only ") 'done)
+;    (begin (display "adbmal") #t))
+;once and only 
+;;; M-Eval value:
+;done
+
+;;; M-Eval input:
+;(or (>= 3 4) (<= 4 1))
+;;; M-Eval value:
+;#f
+
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;;;:::;;;
  		   	      
  		   	      
@@ -338,8 +540,31 @@ your-answer-here
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;::;;::
 ;;; Modify m-eval to handle loop2 as described in the exercise and give
-;;; some test examples below: 		   	      
-your-answer-here 		   	      
+;;; some test examples below:
+
+;;; M-Eval input:
+;(let ((x '()))
+;  (loop (> (length x) 3) x
+;  (set! x (cons '* x))
+;  (display x)))
+;(*)(* *)(* * *)(* * * *)
+;;; M-Eval value:
+;(* * * *)
+
+;;; M-Eval input:
+;(define i 0)
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(loop (>= i 4)
+;      (begin (newline) (* i 2))
+;      (display i) (display " ")
+;      (set! i (+ i 1)))
+;0 1 2 3
+;;; M-Eval value:
+;8
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;::;:;;
  		   	      
  		   	      
@@ -424,7 +649,8 @@ your-answer-here
 (define (add-memoized-value! m-list args result)
   (if (not (memo-list? m-list))
       (error "Cannot add memo-binding to non memo-list variable" m-list)
-      (set-car! (cdr m-list) (append (list (make-binding args result)) (memo-list-body m-list)))
+      (set-car! (cdr m-list)
+                (append (list (make-binding args result)) (memo-list-body m-list)))
       ))
 ; Finds a memo result from the memoization list, returns #f if not found (like assoc)
 (define (find-memo-result m-list args)
@@ -481,38 +707,129 @@ your-answer-here
  		   	      
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;;::;:::;;:;:::;;:
 ; Test cases:
-(refresh-global-environment)
-#|
-;;; M-Eval input:
-(define fib
-  (lambda 'memo (n)
-    (display "Fib: ")
-    (write-line n)
-    (cond ((= n 1) 1)
-          ((= n 2) 1)
-          (else (+ (fib (- n 1)) (fib (- n 2)))))))
 
-;;; M-Eval value:
-#<void>
+; Memo Version
 
 ;;; M-Eval input:
-(fib 10)
-Fib: 10
-Fib: 9
-Fib: 8
-Fib: 7
-Fib: 6
-Fib: 5
-Fib: 4
-Fib: 3
-Fib: 2
-Fib: 1
+;(define fib
+;  (lambda 'memo (n)
+;    (cond ((= n 1) 1)
+;          ((= n 2) 1)
+;          (else (+ (fib (- n 1)) (fib (- n 2)))))))
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(fib 3141)
+;;; M-Eval value:
+;120418447297093507007978384327895568674051461911870283400994251838961087856892246282539147157100549268399663183053984275921361425956330076634337558694463400215095305929049641149478268636237901623018537452469459884778423403302718365883336987762328962999730913269598386332649446960844676612628533523335812369187294711764895145215556464017303315025184462785659962789434426492130770661947444910208738190955877254152125872305777205198248004793473173133903052571492847244819665014259848886325361105035152011345352667194784254540530137731386482589150027685846184388831273665379025898434392849709485541445739180648649937548278888176579059667000127803554557682572866
+
+; No Memo Version
+
+;;; M-Eval input:
+;(define fib
+;  (lambda 'no-memo (n)
+;    (cond ((= n 1) 1)
+;          ((= n 2) 1)
+;          (else (+ (fib (- n 1)) (fib (- n 2)))))))
+;;; M-Eval value:
+;#<void>
+;;; M-Eval input:
+;(fib 3141)
+;;; M-Eval value:
+;...
+; Took too long to compute where as the upper one was instant
+
+; Memo Version
+
+;;; M-Eval input:
+;(define fib-v
+;  (lambda 'memo (n)
+;    (display "Fib: ")
+;    (write-line n)
+;    (cond ((= n 1) 1)
+;          ((= n 2) 1)
+;          (else (+ (fib-v (- n 1)) (fib-v (- n 2)))))))
 
 ;;; M-Eval value:
-55
-|#
+;#<void>
+
+;;; M-Eval input:
+;(fib-v 10)
+;Fib: 10
+;Fib: 9
+;Fib: 8
+;Fib: 7
+;Fib: 6
+;Fib: 5
+;Fib: 4
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;;; M-Eval value:
+;55
+
+; No Memo Version
+
+;;; M-Eval input:
+;(define fib-v
+;  (lambda 'no-memo (n)
+;    (display "Fib: ")
+;    (write-line n)
+;    (cond ((= n 1) 1)
+;          ((= n 2) 1)
+;          (else (+ (fib-v (- n 1)) (fib-v (- n 2)))))))
+;;; M-Eval value:
+;#<void>
+
+;;; M-Eval input:
+;(fib-v 10)
+;Fib: 10
+;Fib: 9
+;Fib: 8
+;Fib: 7
+;Fib: 6
+;Fib: 5
+;Fib: 4
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 2
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 4
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 2
+;Fib: 5
+;Fib: 4
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 2
+;Fib: 3
+;Fib: 2
+;...
+;...
+;...
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 4
+;Fib: 3
+;Fib: 2
+;Fib: 1
+;Fib: 2
+
+;;; M-Eval value:
+;55
+
 ;;;;;;;::;;;::::;:;::::;:::::::;;:;::;:;::::;::;:::;;;;:::::;:;;::;;;:;::;::;;::;;;:;::;:;;;::;;;;;::;;;;
- 		   	      
+
+; Throught this project, I collaborated with 2 others, Cuneyt Emre Yavuz and Ali Sardag. We only discussed about some of the questions.
+
 ;;;;;;;::;::::::;;;::::;;;;:::;:::;;::;;;:;::;;::;::;:;;;:::;;:;::;::;;::;::;
 ;# DO NOT FORGET TO SUBMIT YOUR WORK BEFORE THE DEADLINE!         #
 ;;;;;;;::;::::::;;;::::;;;;:::;:::;;::;;;:;::;;::;::;:;;;:::;;:;::;::;;::;:::
