@@ -1,5 +1,26 @@
 # COMP 200 Lecture Notes
 
+## License and Disclaimer
+
+Copyright 2018-now Caner Korkmaz
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+- http://www.apache.org/licenses/LICENSE-2.0
+- [LICENSE](./LICENSE)
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+**Disclaimer**: The code is provided under Apache License, Version 2.0, however, this is still an active lecture at Koc University with same/similar homeworks, and the author accepts no responsibility regarding the usage of this as a way to do plagiarism, cheat in your homeworks, and the usage is not allowed for that case. This is also true legally as for using/redistributing/submitting the code, you have to comply with Section 4 of the License, implying that you should indicate where you got the source and also add a copy of the License in the code or a NOTICE file. 
+
+
 ## For Help
 
  - [Course Web Site](https://courses.ku.edu.tr/comp200)
@@ -33,6 +54,7 @@
 - [Lec 16](./Lectures/Lec16.ipynb)
 - [Lec 17](./Lectures/Lec17.ipynb)
 - [Lec 18](./Lectures/Lec18.ipynb)
+- Rest at Lectures folder
 
 
 ## Projects
@@ -45,3 +67,4 @@
   - [Folder](./HW/project2/)
 - [Project 3](./HW/project3.pdf)
   - [Folder](./HW/project3/)
+- Rest at HW folder
